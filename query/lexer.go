@@ -140,20 +140,22 @@ var (
 const eof = -1
 
 func (l *lexer) pop() rune {
-	if l.pos >= len(l.input) {
-		l.width = 0
-		return eof
-	}
-	r, w := utf8.DecodeRuneInString(l.input[l.pos:])
+	r, w := l.nextRune()
 	l.width = w
 	l.pos += w
 	return r
 }
 
 func (l *lexer) peek() rune {
-	r := l.pop()
-	l.push()
+	r, _ := l.nextRune()
 	return r
+}
+
+func (l *lexer) nextRune() (rune, int) {
+	if l.pos >= len(l.input) {
+		return eof, 0
+	}
+	return utf8.DecodeRuneInString(l.input[l.pos:])
 }
 
 func (l *lexer) push() {
