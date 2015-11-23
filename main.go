@@ -14,6 +14,7 @@ import (
 
 func main() {
 	app := cli.App("bateau", "Docker ps on steroids")
+	app.LongDesc = HELP
 
 	endpoint := app.StringOpt("e endpoint", "", "The docker socket path or TCP address")
 	_ = app.BoolOpt("c containers", true, "Filter on containers")
@@ -104,3 +105,32 @@ func resolveDockerEndpoint(input string) string {
 	}
 	return "unix:///var/run/docker.sock"
 }
+
+const HELP = `Docker ps on steroids.
+
+Container fields:
+* running, paused, restarting: booleans. e.g. 'running', 'running | paused'
+* label.<label-name>: boolean to test for existence, e.g. 'label.arch' or string to test value, e.g. 'label.arch=amd64'
+* id, name, image. cmd, entrypoint: string, e.g. 'entrypoint~bash'
+* exit: int, e.g. 'exit=1' or 'exit>0'
+* created, exited: duration, e.g. 'created>2w'
+
+Image fields:
+* id, tag, cmd, entrypoint, comment, author, arch, docker_version: string, e.g. 'id~a5fde33'
+* label.<label-name>: boolean to test for existence, e.g. 'label.arch' or string to test value, e.g. 'label.arch=amd64'
+* size: size, e.g. 'size>200MB'
+* created: duration, e.g. 'created>2w'
+
+Duration units:
+ms->milliseconds, s->seconds, m->minutes, h->hours, d->days, w->weeks, M,months->months, y->years
+
+Size units:
+KB->1024, MB->1024MB, GB->1024MB
+Kb->1000, Mb->1000Mb, Gb->1000Mb
+
+Operators:
+'=' : exact equality, '~' : case-insensitive contains, '!=' : exact inequality, '!~' : inverse of ~
+'>', '>=', '<', '<=' : numeric comparison
+'|' : logical or, '&' : logical and, '!' : logical not
+'(', ')' : to control precedence
+`
