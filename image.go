@@ -12,6 +12,7 @@ import (
 var (
 	imgFields = map[string][]query.Operator{
 		"id":             {query.EQ, query.LIKE},
+		"tag":            {query.EQ, query.LIKE},
 		"cmd":            {query.EQ, query.LIKE},
 		"entrypoint":     {query.EQ, query.LIKE},
 		"comment":        {query.EQ, query.LIKE},
@@ -52,6 +53,8 @@ func (c *DockerImage) Is(field string, operator query.Operator, value string) bo
 		return strCompare(labelValue, operator, value)
 	case field == "id":
 		return strCompare(c.apiImage.ID, operator, value)
+	case field == "tag":
+		return sliceCompare(c.apiImage.RepoTags, operator, value)
 	case field == "docker_version":
 		return strCompare(c.full().DockerVersion, operator, value)
 	case field == "comment":
